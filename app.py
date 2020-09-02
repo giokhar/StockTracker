@@ -1,30 +1,41 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_caching import Cache
-from helpers import api_request, get_today, get_days_ago
-from helpers import MINUTE, HALFDAY
+from helpers import api_request, get_datetime_old, get_datetime_now, get_cache_key, beautify_log
+from helpers import MINUTE, DAY
+from database import Database
 
 app = Flask(__name__, static_url_path='/static')
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+db = Database()
 
 
 @app.route('/')
-@cache.cached(timeout=MINUTE)
 def index():
-    return jsonify({"soso": "jemali"})
+    log = db.get_log_for_portfolio(1)
+    return render_template("index.html", data={
+        "log": log
+    })
 
 
-@app.route('/api/stock/<string:ticker>', methods=['GET'])
+@app.route('/api/stock/<string:symbol>', methods=['GET'])
 @cache.cached(timeout=MINUTE)
-def get_stock_price(ticker):
-    result = api_request(f"/daily/{ticker}/prices")
+def get_stock_price(symbol):
+    result = api_request(f"/quote?symbol={symbol}")
+    return result
+
+
+@app.route('/api/stock/history/<string:symbol>', methods=['GET'])
+def get_stock_details(symbol):
+    json = get_stock_price_log(symbol)
+    result = beautify_log(json, 'W', 100)
     return jsonify(result)
 
 
-@app.route('/api/stock/history/<string:ticker>', methods=['GET'])
-@cache.cached(timeout=HALFDAY)
-def get_stock_historical_price(ticker):
-    result = api_request(f"/daily/{ticker}/prices?startDate={get_days_ago(365)}&endDate={get_today()}&resampleFreq=daily")
-    return jsonify(result)
+@cache.cached(timeout=DAY, key_prefix=get_cache_key)
+def get_stock_price_log(symbol):
+    """Get historical data and cache it for 24 hrs"""
+    json = api_request(f"/stock/candle?symbol={symbol}&resolution=60&from={get_datetime_old(1).timestamp()}&to={get_datetime_now().timestamp()}")
+    return json
 
 
 if __name__ == '__main__':
