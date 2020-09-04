@@ -5,6 +5,17 @@ body {
     font-family: "BPG Arial Caps", "BPG Arial Caps", sans-serif;;
 }
 
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.input-wrapper {
+  flex-direction: column;
+  margin: 2rem;
+}
+
  .align-table-center, th, td {
    text-align: center;
  }

@@ -1,17 +1,31 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, redirect, session
 from flask_caching import Cache
 from helpers import api_request, get_datetime_old, get_datetime_now, get_cache_key, beautify_log
-from helpers import MINUTE, DAY
+from helpers import MINUTE, DAY, APP_SECRET
 from database import Database
 
 app = Flask(__name__, static_url_path='/static')
 cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 db = Database()
+app.secret_key = APP_SECRET
+
+
+@app.route('/login/', methods=['GET', 'POST'])
+def login():
+    if session.get('login'):
+        return redirect('/')
+    if request.method == 'POST':
+        # temporary user auth secret
+        if request.form.get('secret') == '2430':
+            session['login'] = True
+    return render_template("login.html", data={})
 
 
 @app.route('/')
 # @cache.cached(timeout=MINUTE)
 def index():
+    if not session.get('login'):
+        return redirect('/login')
     p_id = request.args.get('p_id', 1)
     log = db.get_log_for_portfolio(p_id)
     portfolio = {

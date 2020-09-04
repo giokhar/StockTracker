@@ -15,7 +15,7 @@ MINUTE = 60
 HOUR = 60 * MINUTE
 HALFDAY = 12 * HOUR
 DAY = 2 * HALFDAY
-
+APP_SECRET = os.getenv('APP_SECRET')
 
 def api_request(slug):
     return requests.get(f"{os.getenv('API_BASE')}{slug}&token={os.getenv('API_TOKEN')}").json()

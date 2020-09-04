@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>აქციები</title>
+    <link rel="icon" type="image/ico" href="/static/favicon.ico">
+    <link rel="stylesheet" href="/static/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="//cdn.web-fonts.ge/fonts/bpg-arial-caps/css/bpg-arial-caps.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="gradient-45deg-deep-purple-blue">
+<section id="content" class="mt-5">
+    <h4 class="flex-center white-text">შესვლა</h4>
+    <form action="{{ url_for('login') }}" method="post">
+        <div class="flex-center input-wrapper">
+            <input type="password" name="secret" class="white center-align"
+                   style="border-radius: 1.5rem;padding: 1rem; font-size:2rem;">
+            <button type="submit"
+                    class="waves-effect waves-light btn gradient-45deg-purple-deep-orange gradient-shadow width-100"><i
+                    class="material-icons">login</i></button>
+        </div>
+    </form>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>
