@@ -16,6 +16,9 @@ class Database:
     def get_log_for_portfolio(self, portfolio_id):
         return self.call_proc("GetLogForPortfolio", (portfolio_id,))
 
+    def get_stocks_in_portfolio(self, portfolio_id):
+        return self.call_proc("GetStocksInPortfolio", (portfolio_id,))
+
     def call_proc(self, proc, var_list=(), many=True):
         # if connection is lost, reconnect
         self.con.ping(reconnect=True)

@@ -5,6 +5,14 @@ body {
     font-family: "BPG Arial Caps", "BPG Arial Caps", sans-serif;;
 }
 
+ .align-table-center, th, td {
+   text-align: center;
+ }
+
+.sidenav-overlay {
+ z-index: 996 !important;
+}
+
 .dollar::before {
     content: '$';
 }
@@ -8430,21 +8438,21 @@ tr.group:hover {
   padding: 16px;
 }
 
-#revenue-chart span i.material-icons {
+.stock-chart span i.material-icons {
   top: 5px;
   position: relative;
 }
 
-#revenue-chart .yearly-revenue-chart {
+.stock-chart .yearly-revenue-chart {
   position: relative;
 }
 
-#revenue-chart .yearly-revenue-chart canvas {
+.stock-chart .yearly-revenue-chart canvas {
   width: 100% !important;
   height: 350px !important;
 }
 
-#revenue-chart .yearly-revenue-chart canvas.firstShadow {
+.stock-chart .yearly-revenue-chart canvas.firstShadow {
   position: absolute;
   left: 0px;
   top: 0px;

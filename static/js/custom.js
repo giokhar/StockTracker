@@ -1,5 +1,40 @@
 const API_BASE = `${window.location.origin}/api`;
 
+const chartColors = ['#9C2E9D', '#0288d1', '#ffca28'];
+
+Chart.types.Line.extend({
+	name: "LineAlt",
+	initialize: function () {
+		Chart.types.Line.prototype.initialize.apply(this, arguments);
+
+		let ctx = this.chart.ctx;
+		let originalStroke = ctx.stroke;
+		ctx.stroke = function () {
+			ctx.save();
+			ctx.shadowColor = 'rgba(156, 46, 157,0.5)';
+			ctx.shadowBlur = 20;
+			ctx.shadowOffsetX = 2;
+			ctx.shadowOffsetY = 20;
+			originalStroke.apply(this, arguments);
+			ctx.restore();
+		}
+	}
+});
+
+Chart.types.Line.extend({
+	name: "LineAlt2",
+	initialize: function () {
+		Chart.types.Line.prototype.initialize.apply(this, arguments);
+		let ctx = this.chart.ctx;
+		let originalStroke = ctx.stroke;
+		ctx.stroke = function () {
+			ctx.save();
+			originalStroke.apply(this, arguments);
+			ctx.restore();
+		}
+	}
+});
+
 const countify = (selector) => {
 	let options = {
 		useEasing: true,
@@ -15,143 +50,47 @@ const countify = (selector) => {
 };
 
 window.addEventListener('DOMContentLoaded', () => {
+	// COUNT UP NUMBERS
+	countify('#diff_today');
+	countify('#current');
+	countify('#investment');
 
-	countify("#investment");
+	// INITIALIZE MOBILE SIDEBAR
+	M.Sidenav.init(document.querySelectorAll('.sidenav'));
+	let portfolio_id = document.body.getAttribute('data-p-id');
 
-
-	var thisYearCTX = document.getElementById("thisYearRevenue").getContext("2d");
-	var lastYearCTX = document.getElementById("lastYearRevenue").getContext("2d");
-
-	var thisYearData = {
-		labels: ["January", "February", "March", "April", "May", "June"],
-		datasets: [{
-			label: "This year dataset",
-			fillColor: "#9C2E9D",
-			strokeColor: "#9C2E9D",
-			pointColor: "transparent",
-			pointStrokeColor: "transparent",
-			pointHighlightFill: "#fff",
-			pointHighlightStroke: "#9C2E9D",
-			data: [45, 62, 15, 78, 58, 98]
-		}]
-	};
-
-	var lastYearData = {
-		labels: ["January", "February", "March", "April", "May", "June"],
-		datasets: [{
-			label: "Last year dataset",
-			fillColor: "#E4E4E4",
-			strokeColor: "#E4E4E4",
-			pointColor: "transparent",
-			pointStrokeColor: "transparent",
-			pointHighlightFill: "#fff",
-			pointHighlightStroke: "#E4E4E4",
-			data: [12, 6, 35, 58, 38, 68]
-		}]
-	};
-
-	Chart.types.Line.extend({
-		name: "LineAlt",
-		initialize: function () {
-			Chart.types.Line.prototype.initialize.apply(this, arguments);
-
-			var ctx = this.chart.ctx;
-			var originalStroke = ctx.stroke;
-			ctx.stroke = function () {
-				ctx.save();
-				ctx.shadowColor = 'rgba(156, 46, 157,0.5)';
-				ctx.shadowBlur = 20;
-				ctx.shadowOffsetX = 2;
-				ctx.shadowOffsetY = 20;
-				originalStroke.apply(this, arguments)
-				ctx.restore();
-			}
-		}
-	});
-
-	Chart.types.Line.extend({
-		name: "LineAlt2",
-		initialize: function () {
-			Chart.types.Line.prototype.initialize.apply(this, arguments);
-			var ctx = this.chart.ctx;
-			var originalStroke = ctx.stroke;
-			ctx.stroke = function () {
-				ctx.save();
-				originalStroke.apply(this, arguments)
-				ctx.restore();
-			}
-		}
-	});
-
-	var thisYearChart = new Chart(thisYearCTX).LineAlt(thisYearData, {
-		datasetFill: false,
-		scaleShowGridLines: false,
-
-		datasetStrokeWidth: 5,
-		scaleFontColor: '#9e9e9e',
-		scaleGridLineColor: '#e4e4e4',
-		scaleLineColor: 'transparent',
-		scaleOverride: true,
-		scaleSteps: 5,
-		scaleStepWidth: 20,
-		scaleStartValue: 0
-	});
-	var lastYearChart = new Chart(lastYearCTX).LineAlt2(lastYearData, {
-		datasetFill: false,
-		scaleShowVerticalLines: false,
-		datasetStrokeWidth: 5,
-		scaleFontColor: '#9e9e9e',
-		scaleGridLineColor: '#e4e4e4',
-		scaleLineColor: 'transparent',
-		scaleOverride: true,
-		scaleSteps: 5,
-		scaleStepWidth: 20,
-		scaleStartValue: 0
-	});
-
-	// let ctx = document.getElementById('myChart').getContext('2d');
-
-	// fetch(`${API_BASE}/stock/history/AAPL`)
-	// 	.then(response => response.json())
-	// 	.then(data => {
-	// 		let myLineChart = new Chart(ctx, {
-	// 			type: 'line',
-	// 			data: {
-	// 				labels: data.t,
-	// 				datasets: [{
-	// 					label: 'Amazon',
-	// 					data: data.p,
-	// 				}]
-	// 			},
-	// 			options: {
-	// 				responsive: true,
-	// 				title: {
-	// 					display: true,
-	// 					text: 'Portfolio'
-	// 				},
-	// 				hover: {
-	// 					mode: 'nearest',
-	// 					intersect: true
-	// 				},
-	// 				scales: {
-	// 					xAxes: [{
-	// 						display: true,
-	// 						scaleLabel: {
-	// 							display: true,
-	// 							labelString: 'Time'
-	// 						}
-	// 					}],
-	// 					yAxes: [{
-	// 						display: true,
-	// 						scaleLabel: {
-	// 							display: true,
-	// 							labelString: 'Price'
-	// 						}
-	// 					}]
-	// 				}
-	// 			}
-	// 		});
-	// 	});
+	fetch(`${API_BASE}/stocks/portfolio/${portfolio_id}`)
+		.then(response => response.json())
+		.then(portfolio => {
+			portfolio.forEach((stock, index) => {
+				let ticker = stock.ticker;
+				fetch(`${API_BASE}/stock/history/${ticker}`)
+					.then(response => response.json())
+					.then(stock => {
+						let stockCTX = document.getElementById(ticker.toLowerCase()).getContext("2d");
+						let stockData = {
+							labels: stock.t,
+							datasets: [{
+								fillColor: chartColors[index],
+								strokeColor: chartColors[index],
+								pointColor: "transparent",
+								pointStrokeColor: "transparent",
+								pointHighlightFill: "#fff",
+								pointHighlightStroke: chartColors[index],
+								data: stock.p
+							}]
+						};
+						let stockChart = new Chart(stockCTX).LineAlt(stockData, {
+							datasetFill: false,
+							scaleShowGridLines: true,
+							datasetStrokeWidth: 5,
+							scaleFontColor: '#9e9e9e',
+							scaleGridLineColor: '#e4e4e4',
+							scaleLineColor: 'transparent',
+						});
+					});
+			})
+		});
 
 
 });
