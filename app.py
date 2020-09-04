@@ -18,6 +18,7 @@ def login():
         # temporary user auth secret
         if request.form.get('secret') == '2430':
             session['login'] = True
+            return redirect('/')
     return render_template("login.html", data={})
 
 
