@@ -21,9 +21,8 @@ class Database:
 
     def call_proc(self, proc, var_list=(), many=True):
         # if connection is lost, reconnect
-        if not self.con.open:
+        if self.con.open is False:
             self.con.ping(reconnect=True)
-            self.cur = self.con.cursor()
 
         self.cur.callproc(proc, tuple(var_list))
         if many:
