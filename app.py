@@ -72,6 +72,7 @@ def index():
 
 @app.route('/api/stock/<string:ticker>', methods=['GET'])
 def get_stock_price(ticker):
+    # TODO: Manually cache stock price for one minute
     result = api_request(f"/quote?symbol={ticker}")
     return result
 
